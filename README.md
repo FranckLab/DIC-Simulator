@@ -1,5 +1,5 @@
 # DIC-Simulator
-This simulator is a Matlab-based GUI that assesses how “well” a particular user-provided image correlates given 4 different simulated displacement fields. The purpose of the simulator is to allow the user to optimize the speckle and intensity patterns in an image, without having to run experimentally-based calibration tests, but rather have Matlab simulate them. The DIC simulator performs the following steps:
+The Digital Image Correlation (DIC) simulator is a Matlab-based GUI that assesses how “well” a particular user-provided image correlates given 4 different simulated displacement fields. The purpose of the simulator is to allow the user to optimize the speckle and intensity patterns in an image, without having to run experimentally-based calibration tests, but rather have Matlab simulate them. The DIC simulator performs the following steps:
 
 1. User loads DIC image of interest
 
