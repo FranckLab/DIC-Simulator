@@ -17,7 +17,7 @@ The Digital Image Correlation (DIC) simulator is a Matlab-based GUI that assesse
 
 ## FAQ
 **The GUI looks squashed and button don't appear properly, what should I do?**
-The GUI in newer versions of Matlab and high resolution screens, can sometimes get squashed with various buttons and icons not appearing properly. The easiest way to solve this issue is to resize the GUI layout manually on your computer. Use the command `guide DVC_simulator.fig` and resize the buttons.
+The GUI in newer versions of Matlab and high resolution screens, can sometimes get squashed with various buttons and icons not appearing properly. The easiest way to solve this issue is to resize the GUI layout manually on your computer. Use the command `guide DIC_simulator.fig` and resize the buttons.
 
 
 **What is the recommended minimum size of the input image stack?**
