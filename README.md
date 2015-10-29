@@ -2,6 +2,7 @@
 * [Download latest version v1.1!](https://github.com/FranckLab/DIC-Simulator/releases)
 * [FAQ](https://github.com/FranckLab/DIC-Simulator/blob/master/README.md#faq)
 * [Questions/Issues](https://github.com/FranckLab/DIC-Simulator/issues)
+* [Cite]()
 * [Franck Lab](http://franck.engin.brown.edu)
 
 ## Purpose
@@ -27,7 +28,21 @@ We recommend that the input image stack should have at least have 96 pixels in e
 
 
 ## Cite
-Paper coming out soon. Please cite in future. 
+If used please cite:
+[Estrada, J., Franck, C.,”Intuitive Interface for the Quantitative Evaluation of Speckle Patterns for Use in Digital Image and Volume Correlation Techniques”, J. Applied Mechanics, 2015.](https://appliedmechanics.asmedigitalcollection.asme.org/article.aspx?articleid=2336782)
+
+```bibtex
+@article{estrada2015intuitive,
+  title={Intuitive Interface for the Quantitative Evaluation of Speckle Patterns for Use in Digital Image and Volume Correlation Techniques},
+  author={Estrada, Jonathan B and Franck, Christian},
+  journal={Journal of Applied Mechanics},
+  volume={82},
+  number={9},
+  pages={095001},
+  year={2015},
+  publisher={American Society of Mechanical Engineers}
+}
+```
 
 ## Contact and support
 For questions, please first refer to [FAQ](https://github.com/FranckLab/DIC-Simulator/blob/master/README.md#faq) and [Questions/Issues](https://github.com/FranckLab/DIC-Simulator/issues). Add a new question if similar issue hasn't been reported. We shall help you at the earliest. The author's contact information can be found at [Franck Lab](http://franck.engin.brown.edu).
