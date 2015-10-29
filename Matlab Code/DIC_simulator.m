@@ -1,40 +1,40 @@
-function varargout = DIC_evaluator(varargin)
+function varargout = DIC_simulator(varargin)
 %This program is intended to evaluate the quality of a given DIC image by
 %using simulated deformation fields and analyzing the computed
 %displacements given the known deformations and speckles of the
 %particular-user loaded image
 %This program was developed by C. Franck (Brown University), 02/2012 
-% DIC_EVALUATOR M-file for DIC_evaluator.fig
-%      DIC_EVALUATOR, by itself, creates a new DIC_EVALUATOR or raises the existing
+% DIC_SIMULATOR M-file for DIC_simulator.fig
+%      DIC_SIMULATOR, by itself, creates a new DIC_SIMULATOR or raises the existing
 %      singleton*.
 %
-%      H = DIC_EVALUATOR returns the handle to a new DIC_EVALUATOR or the handle to
+%      H = DIC_SIMULATOR returns the handle to a new DIC_SIMULATOR or the handle to
 %      the existing singleton*.
 %
-%      DIC_EVALUATOR('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in DIC_EVALUATOR.M with the given input arguments.
+%      DIC_SIMULATOR('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in DIC_SIMULATOR.M with the given input arguments.
 %
-%      DIC_EVALUATOR('Property','Value',...) creates a new DIC_EVALUATOR or raises the
+%      DIC_SIMULATOR('Property','Value',...) creates a new DIC_SIMULATOR or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before DIC_evaluator_OpeningFcn gets called.  An
+%      applied to the GUI before DIC_simulator_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to DIC_evaluator_OpeningFcn via varargin.
+%      stop.  All inputs are passed to DIC_simulator_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help DIC_evaluator
+% Edit the above text to modify the response to help DIC_simulator
 
-% Last Modified by GUIDE v2.5 27-Feb-2012 23:46:29
+% Last Modified by GUIDE v2.5 16-Sep-2015 16:39:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @DIC_evaluator_OpeningFcn, ...
-                   'gui_OutputFcn',  @DIC_evaluator_OutputFcn, ...
+                   'gui_OpeningFcn', @DIC_simulator_OpeningFcn, ...
+                   'gui_OutputFcn',  @DIC_simulator_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -48,16 +48,58 @@ else
 end
 % End initialization code - DO NOT EDIT
 
+function cmap = CMRmap(M)
+%   REFERENCE
+% 
+%   [1] Rappaport, C. 2002: "A Color Map for Effective
+%   Black-and-White Rendering of Color Scale Images", IEEE
+%   Antenna's and Propagation Magazine, Vol.44, No.3,
+%   pp.94-96 (June).
+% 
+% See also GRAY.
+% !---
+% ==========================================================
+% Last changed:     $Date: 2012-12-20 14:18:42 +0000 (Thu, 20 Dec 2012) $
+% Last committed:   $Revision: 232 $
+% Last changed by:  $Author: ch0022 $
+% ==========================================================
+% !---
 
-% --- Executes just before DIC_evaluator is made visible.
-function DIC_evaluator_OpeningFcn(hObject, eventdata, handles, varargin)
+% default colormap size
+if nargin < 1, M = size(get(gcf,'colormap'),1); end
+
+% reference colour map
+% adapted from article to produce more linear luminance
+CMRref=...
+    [0    0    0;
+     0.1  0.1  0.35;
+     0.3  0.15 0.65;
+     0.6  0.2  0.50;
+     1    0.25 0.15;
+     0.9  0.55  0;
+     0.9  0.75 0.1;
+     0.9  0.9  0.5;
+     1    1    1];
+
+% Interpolate colormap to colormap size
+cmap = zeros(M,3);
+for c = 1:3
+    cmap(:,c) = interp1((1:9)',CMRref(:,c),linspace(1,9,M)','spline');
+end
+
+% Limit to range [0,1]
+cmap = cmap-min(cmap(:));
+cmap = cmap./max(cmap(:));
+
+% --- Executes just before DIC_simulator is made visible.
+function DIC_simulator_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to DIC_evaluator (see VARARGIN)
+% varargin   command line arguments to DIC_simulator (see VARARGIN)
 
-% Choose default command line output for DIC_evaluator
+% Choose default command line output for DIC_simulator
 handles.output = hObject;
 
 % define everything here
@@ -80,14 +122,11 @@ handles.epp = 0.02;
 % Update handles structure
 guidata(hObject, handles);
 
-
-
-% UIWAIT makes DIC_evaluator wait for user response (see UIRESUME)
+% UIWAIT makes DIC_simulator wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
-
 % --- Outputs from this function are returned to the command line.
-function varargout = DIC_evaluator_OutputFcn(hObject, eventdata, handles) 
+function varargout = DIC_simulator_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -98,7 +137,7 @@ varargout{1} = handles.output;
 
 
 % --- Executes on button press in loadimage.
-function loadimage_Callback(hObject, eventdata, handles)
+function loadimage_Callback(hObject, ~, handles)
 % hObject    handle to loadimage (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -111,13 +150,18 @@ function loadimage_Callback(hObject, eventdata, handles)
 %  dvc_file = load(filename);
 %  handles.pic = dvc_file.vol_stack; 
 handles.pic = importdata([pathname,filename]);
+handles.pic = flip(handles.pic,1); %corrects for import flipping
 axes(handles.axes1);
-imagesc(handles.pic);
+imagesc(handles.pic); set(gca,'YDir','normal');
 set(gca,'fontweight','b','FontSize',12,'xcolor','w','ycolor','w');
 [m,n,p] = size(handles.pic);
 if p ~= 1,
     handles.pic = squeeze(sum(handles.pic(:,:,1:p),3));
 end
+colormap(handles.axes1,'gray');
+colormap(handles.axes2,CMRmap(256));
+colormap(handles.axes3,CMRmap(256));
+
 guidata(hObject,handles);
 
 
@@ -353,8 +397,8 @@ handles.x;
 handles.y;
 %handles.displ;
 contourf(handles.x, handles.y,handles.u); colorbar;
-h = colorbar;
-set(get(h,'title'),'string','Pixel','fontweight','b','fontsize',12,'color','w');
+h = colorbar; 
+set(get(h,'title'),'string','                Pixel','fontweight','b','fontsize',12,'color','w');
 set(h,'fontweight','b', 'fontsize',12);
 grid on
 axis tight
@@ -366,22 +410,22 @@ handles.x;
 handles.y;
 %handles.displ;
 contourf(handles.x, handles.y,handles.v); colorbar;
-h = colorbar;
-set(get(h,'title'),'string','Pixel','fontweight','b','fontsize',12,'color','w');
+h = colorbar; 
+set(get(h,'title'),'string','                Pixel','fontweight','b','fontsize',12,'color','w');
 set(h,'fontweight','b', 'fontsize',12);
 grid on
 axis tight
 set(gca,'fontweight','b','FontSize',12,'xcolor','w','ycolor','w');
 
 
-axes(handles.axes5);
-clear err;
+axes(handles.axes5); 
+clear err; 
 err = (handles.ut - dispp.ut2)./dispp.ut2*100;
 err = err(:);
 hist(err,20);
 set(gca,'fontweight','b','FontSize',10,'xcolor','k','ycolor','k');
 %xlabel('difference (pixel)','fontweight','b','FontSize',10);
-ylabel('U_1','fontweight','b','FontSize',10);
+ylabel('u_1','fontweight','b','FontSize',10);
 
 axes(handles.axes6);
 %Construct the solution right here:
@@ -400,7 +444,7 @@ set(gca,'fontweight','b','FontSize',10,'xcolor','k','ycolor','k');
 %xlabel('difference (pixel)','fontweight','b','FontSize',10);
 %ylabel('Frequency','fontweight','b','FontSize',10);
 
-axes(handles.axes7);
+axes(handles.axes7); 
 us = strain*y;   %  shear in x
 vs = strain*x;   %  shear in y
 err = (handles.us - us)./us*100;
@@ -410,7 +454,7 @@ set(gca,'fontweight','b','FontSize',10,'xcolor','k','ycolor','k');
 %xlabel('difference (pixel)','fontweight','b','FontSize',10);
 %ylabel('Frequency','fontweight','b','FontSize',10);
 
-axes(handles.axes8);
+axes(handles.axes8); 
 % generate point force image
 nu = 0.45;
 E = 1000;
@@ -439,7 +483,7 @@ set(gca,'fontweight','b','FontSize',10,'xcolor','k','ycolor','k');
 %xlabel('difference (pixel)','fontweight','b','FontSize',10);
 %ylabel('Frequency','fontweight','b','FontSize',10);
 
-axes(handles.axes9);
+axes(handles.axes9); 
 if dispp.vt2 == 0,
     err = (handles.vt);
 else
@@ -449,9 +493,9 @@ err = err(:);
 hist(err,20);
 set(gca,'fontweight','b','FontSize',10,'xcolor','k','ycolor','k');
 %xlabel('difference (pixel)','fontweight','b','FontSize',10);
-ylabel('U_2','fontweight','b','FontSize',10);
+ylabel('u_2','fontweight','b','FontSize',10);
 
-axes(handles.axes10);
+axes(handles.axes10); 
 err = (handles.va - va)./va*100;
 err = err(:);
 hist(err,20);
@@ -459,7 +503,7 @@ set(gca,'fontweight','b','FontSize',10,'xcolor','k','ycolor','k');
 %xlabel('difference (pixel)','fontweight','b','FontSize',10);
 %ylabel('Frequency','fontweight','b','FontSize',10);
 
-axes(handles.axes11);
+axes(handles.axes11); 
 err = (handles.vs - vs)./vs*100;
 err = err(:);
 hist(err,20);
@@ -488,6 +532,8 @@ set(gca,'fontweight','b','FontSize',10,'xcolor','k','ycolor','k');
 % Update handles structure
 guidata(hObject, handles);
 
+
+
 % --- Executes on button press in magu.
 function magu_Callback(hObject, eventdata, handles)
 % hObject    handle to magu (see GCBO)
@@ -515,7 +561,7 @@ axes(handles.axes2);
 cla;
 contourf(handles.x, handles.y,handles.displ); 
 h = colorbar;
-set(get(h,'title'),'string','Pixel','fontweight','b','fontsize',12,'color','w');
+set(get(h,'title'),'string','                Pixel','fontweight','b','fontsize',12,'color','w');
 set(h,'fontweight','b', 'fontsize',12);
 grid on
 axis tight
@@ -527,7 +573,7 @@ contourf(handles.x, handles.y,handles.displ);
 hold on;
 quiver(handles.x, handles.y,handles.u,handles.v,'w'); 
 h = colorbar;
-set(get(h,'title'),'string','Pixel','fontweight','b','fontsize',12,'color','w');
+set(get(h,'title'),'string','                Pixel','fontweight','b','fontsize',12,'color','w');
 set(h,'fontweight','b', 'fontsize',12);
 grid on
 axis tight
@@ -561,7 +607,7 @@ axes(handles.axes2);
 cla;
 contourf(handles.x, handles.y,handles.u); 
 h = colorbar;
-set(get(h,'title'),'string','Pixel','fontweight','b','fontsize',12,'color','w');
+set(get(h,'title'),'string','                Pixel','fontweight','b','fontsize',12,'color','w');
 set(h,'fontweight','b', 'fontsize',12);
 grid on
 axis tight
@@ -571,7 +617,7 @@ axes(handles.axes3);
 cla;
 contourf(handles.x, handles.y,handles.v); 
 h = colorbar;
-set(get(h,'title'),'string','Pixel','fontweight','b','fontsize',12,'color','w');
+set(get(h,'title'),'string','                Pixel','fontweight','b','fontsize',12,'color','w');
 set(h,'fontweight','b', 'fontsize',12);
 grid on
 axis tight
@@ -701,7 +747,7 @@ axes(handles.axes2);
 cla;
 contourf(handles.x, handles.y,handles.e11); 
 h = colorbar;
-set(get(h,'title'),'string','Pixel','fontweight','b','fontsize',12,'color','w');
+set(get(h,'title'),'string','                Pixel','fontweight','b','fontsize',12,'color','w');
 set(h,'fontweight','b', 'fontsize',12);
 grid on
 axis tight
@@ -711,7 +757,7 @@ axes(handles.axes3);
 cla;
 contourf(handles.x, handles.y,handles.e22); 
 h = colorbar;
-set(get(h,'title'),'string','Pixel','fontweight','b','fontsize',12,'color','w');
+set(get(h,'title'),'string','                Pixel','fontweight','b','fontsize',12,'color','w');
 set(h,'fontweight','b', 'fontsize',12);
 grid on
 axis tight
@@ -745,7 +791,7 @@ axes(handles.axes2);
 cla;
 contourf(handles.x, handles.y,handles.e12); 
 h = colorbar;
-set(get(h,'title'),'string','Pixel','fontweight','b','fontsize',12,'color','w');
+set(get(h,'title'),'string','                Pixel','fontweight','b','fontsize',12,'color','w');
 set(h,'fontweight','b', 'fontsize',12);
 grid on
 axis tight
@@ -755,7 +801,7 @@ axes(handles.axes3);
 cla;
 contourf(handles.x, handles.y,handles.e21); 
 h = colorbar;
-set(get(h,'title'),'string','Pixel','fontweight','b','fontsize',12,'color','w');
+set(get(h,'title'),'string','                Pixel','fontweight','b','fontsize',12,'color','w');
 set(h,'fontweight','b', 'fontsize',12);
 grid on
 axis tight
@@ -878,10 +924,130 @@ cn=abs(fftshift(ifft2(conj(fft2(dm0))./abs(fft2(dm0)).*fft2(dm1)./abs(fft2(dm1))
     end 
   end
 
-
- 
-
-
-
-
-
+  
+  % --- Executes on button press in viewdef.
+    function viewdef_Callback(hObject, eventdata, handles)
+        % hObject    handle to viewdef (see GCBO)
+        % eventdata  reserved - to be defined in a future version of MATLAB
+        % handles    structure with handles and user data (see GUIDATA)
+        original_image = handles.pic;
+        translated_image = handles.tpic;
+        strain_image = handles.strpic;
+        shear_image = handles.shpic;
+        pointload_image = handles.ppic;
+                figure; colormap gray; set(gcf,'Color','white');
+                subplot(1,2,1); imagesc(handles.pic); axis image; title('Original Image');
+                set(gca,'YDir','normal','FontName','Helvetica','fontweight','b');
+                xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+                subplot(1,2,2); imagesc(handles.tpic); axis image; title('Translation');
+                set(gca,'YDir','normal','FontName','Helvetica','fontweight','b');
+                xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+                
+                figure; colormap gray; set(gcf,'Color','white');
+                subplot(1,2,1); imagesc(handles.pic); axis image; title('Original Image');
+                set(gca,'YDir','normal','FontName','Helvetica','fontweight','b');
+                xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+                subplot(1,2,2); imagesc(handles.strpic); axis image; title('Uniaxial Strain');
+                set(gca,'YDir','normal','FontName','Helvetica','fontweight','b');
+                xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+                
+                figure; colormap gray; set(gcf,'Color','white');
+                subplot(1,2,1); imagesc(handles.pic); axis image; title('Original Image');
+                set(gca,'YDir','normal','FontName','Helvetica','fontweight','b');
+                xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+                subplot(1,2,2); imagesc(handles.shpic); axis image; title('Shear Strain');
+                set(gca,'YDir','normal','FontName','Helvetica','fontweight','b');
+                xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+                
+                figure; colormap gray; set(gcf,'Color','white');
+                subplot(1,2,1); imagesc(handles.pic); axis image; title('Original Image');
+                set(gca,'YDir','normal','FontName','Helvetica','fontweight','b');
+                xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+                subplot(1,2,2); imagesc(handles.ppic); axis image; title('Point Load');
+                set(gca,'YDir','normal','FontName','Helvetica','fontweight','b');
+                xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+                
+        imagechoice = questdlg('Would you like to save the reference and deformed images?', ...
+            'Save images', ...
+            'Save to *.tif','Save to *.mat','No','No');
+        % Handle response
+        switch imagechoice
+            case 'Save to *.tif'
+                if isa(original_image,'uint8')
+                    imwrite(flip(original_image,1),'original_image.tif');
+                else
+                    imwrite(uint8(round(255*flip(original_image,1)./max(translated_image(:)))),'original_image.tif');
+                end
+                imwrite(uint8(round(255*flip(translated_image,1)./max(translated_image(:)))),'translated_image.tif');
+                imwrite(uint8(round(255*flip(strain_image,1)./max(strain_image(:)))),'strain_image.tif');
+                imwrite(uint8(round(255*flip(shear_image,1)./max(shear_image(:)))),'shear_image.tif');
+                imwrite(uint8(round(255*flip(pointload_image,1)./max(pointload_image(:)))),'pointload_image.tif');
+            case 'Save to *.mat'
+                save('imagedata.mat','original_image','translated_image','strain_image','shear_image','pointload_image');
+            case 'No'
+        end
+        
+        u1_translation = handles.ut; u2_translation = handles.vt;
+        u1_strain = handles.ua; u2_strain = handles.va;
+        u1_shear = handles.us; u2_shear = handles.vs;
+        u1_pointload = handles.up; u2_pointload = handles.vp;
+        
+        figure; colormap gray; set(gcf,'Color','white');
+        subplot(1,2,1); contourf(handles.x, handles.y, handles.ut, 10,'LineWidth',0); colorbar; h1= colorbar;
+        set(get(h1,'title'),'string','                Pixel','fontweight','b','fontsize',12);
+        axis image; title('u_1, Translation Case');
+        xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+        subplot(1,2,2); contourf(handles.x, handles.y, handles.vt, 10,'LineWidth',0); colorbar; h2= colorbar;
+        set(get(h2,'title'),'string','                Pixel','fontweight','b','fontsize',12);
+        axis image; title('u_2, Translation Case');
+        xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+        
+        
+        figure; colormap gray; set(gcf,'Color','white');
+        subplot(1,2,1); contourf(handles.x, handles.y, handles.ua, 10,'LineWidth',0); colorbar; h3= colorbar;
+        set(get(h3,'title'),'string','                Pixel','fontweight','b','fontsize',12);
+        axis image; title('u_1, Uniaxial Strain Case');
+        xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+        subplot(1,2,2); contourf(handles.x, handles.y, handles.va, 10,'LineWidth',0); colorbar; h4= colorbar;
+        set(get(h4,'title'),'string','                Pixel','fontweight','b','fontsize',12);
+        axis image; title('u_2, Uniaxial Strain Case');
+        xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+        
+        figure; colormap gray; set(gcf,'Color','white');
+        subplot(1,2,1); contourf(handles.x, handles.y, handles.us, 10,'LineWidth',0); colorbar; h5= colorbar;
+        set(get(h5,'title'),'string','                Pixel','fontweight','b','fontsize',12);
+        axis image; title('u_1, Shear Case');
+        xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+        subplot(1,2,2); contourf(handles.x, handles.y, handles.vs, 10,'LineWidth',0); colorbar; h6= colorbar;
+        set(get(h6,'title'),'string','                Pixel','fontweight','b','fontsize',12);
+        axis image; title('u_2, Shear Case');
+        xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+        
+        figure; colormap gray; set(gcf,'Color','white');
+        subplot(1,2,1); contourf(handles.x, handles.y, handles.up, 10,'LineWidth',0); colorbar; h7= colorbar;
+        set(get(h7,'title'),'string','                Pixel','fontweight','b','fontsize',12);
+        axis image; title('u_1, Point Load Case');
+        xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+        subplot(1,2,2); contourf(handles.x, handles.y, handles.vp, 10,'LineWidth',0); colorbar; h8= colorbar;
+        set(get(h8,'title'),'string','                Pixel','fontweight','b','fontsize',12);
+        axis image; title('u_2, Point Load Case');
+        xlabel('x_1 (Pixel)','fontweight','normal'); ylabel('x_2 (Pixel)','fontweight','normal');
+        
+        displchoice = questdlg('Would you like to save the displacement fields?', ...
+            'Save displacements', ...
+            'Save to *.tif','Save to *.mat','No','No');
+        % Handle response
+        switch displchoice  
+            case 'Save to *.tif'
+                imwrite(uint8(255*(u1_translation-min(u1_translation(:)))/(max(u1_translation(:))-min(u1_translation(:)))),'u1_translation.tif');
+                imwrite(uint8(255*(u2_translation-min(u2_translation(:)))/(max(u2_translation(:))-min(u2_translation(:)))),'u2_translation.tif');
+                imwrite(uint8(255*(u1_strain-min(u1_strain(:)))/(max(u1_strain(:))-min(u1_strain(:)))),'u1_strain.tif');
+                imwrite(uint8(255*(u2_strain-min(u2_strain(:)))/(max(u2_strain(:))-min(u2_strain(:)))),'u2_strain.tif');
+                imwrite(uint8(255*(u1_shear-min(u1_shear(:)))/(max(u1_shear(:))-min(u1_shear(:)))),'u1_shear.tif');
+                imwrite(uint8(255*(u2_shear-min(u2_shear(:)))/(max(u2_shear(:))-min(u2_shear(:)))),'u2_shear.tif');
+                imwrite(uint8(255*(u1_pointload-min(u1_pointload(:)))/(max(u1_pointload(:))-min(u1_pointload(:)))),'u1_pointload.tif');
+                imwrite(uint8(255*(u2_pointload-min(u2_pointload(:)))/(max(u2_pointload(:))-min(u2_pointload(:)))),'u2_pointload.tif');                   
+            case 'Save to *.mat'
+                save('dispdata.mat','u1_translation','u2_translation','u1_strain','u2_strain','u1_shear','u2_shear','u1_pointload','u2_pointload');
+            case 'No'
+        end
