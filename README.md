@@ -1,5 +1,5 @@
 ###Important pages
-* [Download latest version v1.0!](https://github.com/FranckLab/DIC-Simulator/releases)
+* [Download latest version v1.1!](https://github.com/FranckLab/DIC-Simulator/releases)
 * [FAQ](https://github.com/FranckLab/DIC-Simulator/blob/master/README.md#faq)
 * [Questions/Issues](https://github.com/FranckLab/DIC-Simulator/issues)
 * [Franck Lab](http://franck.engin.brown.edu)
