@@ -2,7 +2,7 @@
 * [Download latest version v1.1!](https://github.com/FranckLab/DIC-Simulator/releases)
 * [FAQ](https://github.com/FranckLab/DIC-Simulator/blob/master/README.md#faq)
 * [Questions/Issues](https://github.com/FranckLab/DIC-Simulator/issues)
-* [Cite]()
+* [Cite](https://github.com/FranckLab/DIC-Simulator/blob/master/README.md#cite)
 * [Franck Lab](http://franck.engin.brown.edu)
 
 ## Purpose
