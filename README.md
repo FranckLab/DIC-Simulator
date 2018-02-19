@@ -1,4 +1,4 @@
-###Important pages###
+## Important pages
 * [Download latest version v1.1!](https://github.com/FranckLab/DIC-Simulator/releases)
 * [FAQ](https://github.com/FranckLab/DIC-Simulator/blob/master/README.md#faq)
 * [Questions/Issues](https://github.com/FranckLab/DIC-Simulator/issues)
@@ -17,6 +17,7 @@ The Digital Image Correlation (DIC) simulator is a Matlab-based GUI that assesse
 4. The Matlab-GUI plots the determined displacement field as color contours, and as histograms of the error difference between the analytically-prescribed and DIC correlated displacement fields
 
 **Health Warning!**
+
 The algorithm expects the your specle pattern to cover the entire field-of-view of the image you provide and will either error out or provide eroneous result if this is not the case.
 
 ## FAQ
